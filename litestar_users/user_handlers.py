@@ -56,10 +56,14 @@ async def session_retrieve_user_handler(session: dict[str, Any], connection: ASG
     try:
         # undocumented relationship loading api
         statement = _check_update_statement(connection, repository.statement)
-        user_id = session.get("user_id")
-        if user_id is None:
+        session_user_id = session.get("user_id")
+        if session_user_id is None:
             return None
-        user = await repository.get(UUID(user_id), statement=statement)
+        try:
+            user_id = UUID(session_user_id)
+        except AttributeError:
+            user_id = int(session_user_id)
+        user = await repository.get(user_id, statement=statement)
         if user.is_active and user.is_verified:
             return user  # type: ignore[no-any-return]
     except NotFoundError:
