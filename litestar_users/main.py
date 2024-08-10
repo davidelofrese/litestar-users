@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Sequence
 from uuid import UUID
 
-from advanced_alchemy.exceptions import RepositoryError
 from advanced_alchemy.types import GUID
 from litestar.contrib.jwt import JWTAuth, JWTCookieAuth
 from litestar.dto import DTOData
@@ -11,7 +10,6 @@ from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
 from litestar.security.session_auth import SessionAuth
 from sqlalchemy.sql.sqltypes import BigInteger, Uuid
 
-from litestar_users.exceptions import TokenException, repository_exception_to_http_response, token_exception_handler
 from litestar_users.route_handlers import (
     get_auth_handler,
     get_current_user_handler,
@@ -35,7 +33,6 @@ if TYPE_CHECKING:
     from litestar import Router
     from litestar.config.app import AppConfig
     from litestar.handlers import HTTPRouteHandler
-    from litestar.types import ExceptionHandlersMap
 
     from litestar_users.config import LitestarUsersConfig
 
@@ -58,12 +55,6 @@ class LitestarUsersPlugin(InitPluginProtocol, CLIPluginProtocol):
 
         app_config = auth_backend.on_app_init(app_config)
         app_config.route_handlers.extend(route_handlers)
-
-        exception_handlers: ExceptionHandlersMap = {
-            RepositoryError: repository_exception_to_http_response,
-            TokenException: token_exception_handler,
-        }
-        app_config.exception_handlers.update(exception_handlers)
 
         app_config.signature_namespace.update(
             {
