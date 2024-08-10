@@ -18,7 +18,6 @@ from litestar.contrib.jwt import JWTAuth, JWTCookieAuth, Token
 from litestar.datastructures import State
 from litestar.dto import DataclassDTO
 from litestar.middleware.session.server_side import ServerSideSessionConfig
-from litestar.repository.exceptions import RepositoryError
 from litestar.security.session_auth import SessionAuth
 from litestar.testing import TestClient
 from sqlalchemy import Text
@@ -37,7 +36,6 @@ from litestar_users.config import (
     UserManagementHandlerConfig,
     VerificationHandlerConfig,
 )
-from litestar_users.exceptions import TokenException, repository_exception_to_http_response, token_exception_handler
 from litestar_users.password import PasswordManager
 from litestar_users.service import BaseUserService
 from tests.constants import ENCODING_SECRET, HASH_SCHEMES
@@ -213,10 +211,6 @@ def litestar_users(litestar_users_config: LitestarUsersConfig) -> LitestarUsersP
 def app(litestar_users: LitestarUsersPlugin, sqlalchemy_plugin: SQLAlchemyInitPlugin) -> Litestar:
     return Litestar(
         debug=True,
-        exception_handlers={
-            RepositoryError: repository_exception_to_http_response,
-            TokenException: token_exception_handler,
-        },
         plugins=[sqlalchemy_plugin, litestar_users],
         route_handlers=[],
         state=State({"testing": True}),
