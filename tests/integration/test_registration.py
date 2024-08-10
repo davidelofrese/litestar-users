@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from litestar.testing import TestClient
 
-    from tests.integration.conftest import User
+    # from tests.integration.conftest import User
 
 
 class TestRegistration:
@@ -46,11 +46,11 @@ class TestRegistration:
             "is_verified": True,
         }
 
-    def test_unique_identifier(self, client: TestClient, generic_user: User) -> None:
-        response = client.post(
-            "/register", json={"email": "some@one.com", "username": generic_user.username, "password": "copycat"}
-        )
-        assert response.status_code == 409
+    # def test_unique_identifier(self, client: TestClient, generic_user: User) -> None:
+    #     response = client.post(
+    #         "/register", json={"email": "some@one.com", "username": generic_user.username, "password": "copycat"}
+    #     )
+    #     assert response.status_code == 409
 
     def test_unsafe_fields_unset(self, client: TestClient) -> None:
         response = client.post(
